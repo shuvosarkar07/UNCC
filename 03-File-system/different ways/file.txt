@@ -1,0 +1,1 @@
+What is a system call? A system calls acts like a request to the operating system (OS) from a program or software for performing tasks reserved for the OS
