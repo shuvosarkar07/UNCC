@@ -18,14 +18,20 @@ const moveCursor = (dx, dy) => {
   });
 };
 
-
 const client = net.createConnection(
   { host: "127.0.0.1", port: 3000 },
   async () => {
     console.log("Connected to the server!");
 
     const ask = async () => {
-      const message = await rl.question("Enter your message: ");
+      const message = await rl.question("message: ");
+
+      if (message === "exit") {
+        await moveCursor(0, -1);
+        await clearLine(0);
+        process.stdout.write("Goodbye!\n");
+        client.end();
+      }
 
       await moveCursor(0, -1);
       await clearLine(0);
@@ -35,7 +41,7 @@ const client = net.createConnection(
 
     ask();
     client.ask = ask;
-  }
+  },
 );
 
 client.on("data", async (data) => {
@@ -44,13 +50,16 @@ client.on("data", async (data) => {
   await moveCursor(0, -1);
   await clearLine(0);
 
-
   process.stdout.write(data.toString("utf-8") + "\n");
   client.ask();
 });
 
+client.on("error", (err) => {
+  console.error(err);
+  client.end();
+});
 
-client.on("end", () => {
+client.on("close", () => {
   console.log("Connection was ended!");
   rl.close();
   process.exit(0);
