@@ -31,6 +31,7 @@ const client = net.createConnection(
         await clearLine(0);
         process.stdout.write("Goodbye!\n");
         client.end();
+        return;
       }
 
       await moveCursor(0, -1);
@@ -45,13 +46,16 @@ const client = net.createConnection(
 );
 
 client.on("data", async (data) => {
-  console.log();
+  if (client.destroyed) return;
 
+  console.log();
   await moveCursor(0, -1);
   await clearLine(0);
 
   process.stdout.write(data.toString("utf-8") + "\n");
-  client.ask();
+  if (!client.destroyed) {
+    client.ask();
+  }
 });
 
 client.on("error", (err) => {
