@@ -21,10 +21,10 @@ const moveCursor = (dx, dy) => {
 const client = net.createConnection(
   { host: "127.0.0.1", port: 3000 },
   async () => {
-    console.log("Connected to the server!");
+    // console.log("Connected to the server!");
 
     const ask = async () => {
-      const message = await rl.question("message: ");
+      const message = await rl.question("message > ");
 
       if (message === "exit") {
         await moveCursor(0, -1);
